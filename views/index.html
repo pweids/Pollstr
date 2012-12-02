@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+<head>
+    <meta charset="UTF-8">
+    <title>Pollstr</title>
+
+</head>
+
+<body>
+
+<form action="newUser" method="post" accept-charset="utf-8">
+    <h2>Register</h2>
+    <p><input type="text" name="email" placeholder="email" required /></p>
+    <p><input type="password" name="password" placeholder="password" required /></p>
+    <p><input type="password" name="passwordConfirm" placeholder="confirm password" required /></p>
+    <p><input type="submit" value="Register &rarr;"></p>
+</form>
+
+<form action="login" method="post" accept-charset="utf-8">
+    <h2>Log in</h2>
+    <p><input type="text" name="email" placeholder="email" required /></p>
+    <p><input type="password" name="password" placeholder="password" required /></p>
+    <p><input type="submit" value="Login &rarr;"></p>
+</form>
+
+<form action="moderate.html" method="post" accept-charset="utf-8">
+    <h2>New poll (only when logged in)</h2>
+    <p><input type="text" name="title" placeholder="Title" required /></p>
+    <p><input type="text" name="candidate1" placeholder="Candidate 1" /></p>
+    <p id="firstCandidate"><input type="text" name="candidate2" placeholder="Candidate 2" /></p>
+    <p><button id="newCandidate">Add a candidate</button></p>
+    <p><input type="radio" name="style" value="fptp" checked />Winner Takes All
+        <input type="radio" name="style" value="pref" />Preferential</p>
+    <p><label for="numWinners">Number of winners:</label>&nbsp;<select name="numWinners" id="numWinners">
+        <option value="1">1</option>
+    </select></p>
+    <p><label for="quorum">Minimum votes: </label><input name="quorum" style="width:4em;text-align:right" type="number" /></p>
+    <p><input type="submit" value="Create" /></p>
+    
+</form>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var numCandidates = 2;
+       $('#newCandidate').click(function(e) {
+           e.preventDefault();
+           numCandidates += 1;
+           var newOption = numCandidates - 1;
+           $('#firstCandidate').append('<p><input type="text" name="candidate'+numCandidates+'" placeholder="Candidate '+numCandidates+'" /></p>')
+           $('#numWinners').append('<option value="'+newOption+'">'+newOption+'</option>');
+       }); 
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+    <style type="text/css">
+        #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+        #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
+        #sortable li span { position: absolute; margin-left: -1.3em; }
+        </style>
+</head>
+
+<body>
+<div id="sortable">
+    <li id="candidate_1" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>{candidate 1}</li>
+    <li id="candidate_2" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>{candidate 2}</li>
+    <li id="candidate_3" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>{candidate 3}</li>
+    <li id="candidate_4" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>{candidate 4}</li>
+    <li id="candidate_5" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>{candidate 5}</li>
+</div>
+<button id="submit">Submit Vote</button>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+            $( "#sortable" ).sortable();
+            $( "#sortable" ).disableSelection();
+            
+            $("#submit").click(function(e){
+               console.log($("#sortable").sortable("serialize", {key:"candidate"}));
+               $("#sortable").sortable("disable");
+               $(this).unbind("click");
+               $(this).click(function(e){e.preventDefault;alert("You have already voted.")}); 
+               
+            });
+        });
+</script>
+</body>
+</html>
