@@ -56,8 +56,13 @@ module.exports = function (app) {
     });
     
     app.post('/login', passport.authenticate('local'), function(req, res) {
+        console.log(req.user.id);
        req.user.save();
        return res.send('success\n<a href="/logout">logout</a>'); 
+    });
+    
+    app.get('/login', function(req, res) {
+        res.redirect('/');
     });
     
     app.get('/logout', function(req, res) {

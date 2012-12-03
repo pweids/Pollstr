@@ -15,10 +15,17 @@ function init() {
     
     require('./controllers/loginRoutes')(app);
     
+    app.get('*', function(req, res) {
+       res.render('404',
+       { title: '404'}); 
+    });
+    
     app.listen(8080);
 }
 
 init();
+
+
 
 function configureExpress(app) {
     app.configure(function(){
@@ -41,9 +48,10 @@ function configureExpress(app) {
         
         app.use(passport.initialize());
         app.use(passport.session());
-        
-        app.use(app.router);
+         
         app.use(express.static(__dirname + '/static'));
+        app.use(app.router);
+      
     });
 }
 
