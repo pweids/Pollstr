@@ -1,23 +1,37 @@
 extend layout
+
 block content
-    p
-        | Vivamus hendrerit arcu sed erat molestie
-        | vehicula. Sed auctor neque eu tellus
-        | rhoncus ut eleifend nibh porttitor. Ut in.
-    p
-        | Donec congue lacinia dui, a porttitor
-        | lectus condimentum laoreet. Nunc eu
-        | ullamcorper orci. Quisque eget odio ac
-        | lectus vestibulum faucibus eget in metus.
-        | In pellentesque faucibus vestibulum. Nulla
-        | at nulla justo, eget luctus tortor.
+    form(action="login", method="post", accept-charset="utf-8")
+        h2 Log In
+        p 
+            input(type="text", name="username", placeholder="email", required)
+        p 
+            input(type="password", name="password", placeholder="password", requried)
+        p 
+            input(type="submit", value="Login")
+            
+    form(action="register", method="post", accept-charset="utf-8")
+        h2 Register
+        p 
+            input(type="text", name="username", placeholder="email", required)#regUsername
+        p 
+            input(type="password", name="password", placeholder="password", requried)#regPassword
+        p 
+            input(type="password", name="passwordConfirm", placeholder="conform password", required)#regPassConfirm
+        p 
+            input(type="submit", value="Register")#register
+            
 block sidebar
     .widget
-        h1 Widget
+        h1 Welcome
+        p.
+            Pollstr is an online voting/polling application. Use it to conduct polls
+            in either the 
+            <a href="http://en.wikipedia.org/wiki/First-past-the-post_voting">first-past-the-post</a>
+            method or the 
+            <a href="http://en.wikipedia.org/wiki/Instant-runoff_voting">preferential voting method.</a>
         p
-            | Sed auctor neque eu tellus rhoncus ut
-            | eleifend nibh porttitor. Ut in nulla enim.
-        p
-            | Vivamus hendrerit arcu sed erat molestie
-            | vehicula.
-            | 
+            | Go ahead and register to the left. From there you can create, share, and moderate polls.
+
+block scripts
+    script(src='/js/index.js')

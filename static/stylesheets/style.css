@@ -123,20 +123,33 @@ header {
   text-shadow: 0px -1px 0px #df1806;
 }
 .container {
-  width: 500px;
-  margin: 50px auto;
+  width: 550px;
+  margin: 25px auto;
   overflow: hidden;
+}
+.errors {
+  color: #f00;
+  padding: 10px;
 }
 .main-content {
   float: left;
   width: 300px;
 }
-.main-content p {
+.main-content h2 {
+  margin-bottom: 5px;
+}
+.main-content form {
   margin-bottom: 20px;
+}
+.main-content form input {
+  width: 75%;
+}
+.main-content form input[type="submit"] {
+  width: 75px;
 }
 .sidebar {
   float: left;
-  width: 200px;
+  width: 250px;
 }
 .sidebar .widget {
 /*
@@ -160,6 +173,7 @@ header {
   -webkit-border-radius: 2px 2px 0px 0px;
   border-radius: 2px 2px 0px 0px;
   margin-bottom: 10px;
+  text-align: center;
 }
 .sidebar .widget p {
   font-size: 13px;

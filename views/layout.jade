@@ -7,6 +7,10 @@ html
         header
             h1 Pollstr
         .container
+            .errors
+                - if (typeof(errors) !== 'undefined')
+                    each err in errors
+                        p= err
             .main-content
                 block content
             .sidebar
@@ -18,3 +22,7 @@ html
                 |  for 
                 a(href="http://cs.cmu.edu/~237") 15-237
                 |  at Carnegie Mellon
+            p Runs on Node.JS with Express, Passport, Jade, Stylus, Nib, and MongooseDB
+        script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js")
+        block scripts
+            
