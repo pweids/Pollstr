@@ -17,7 +17,7 @@ global-reset()
  * Store the main color and
  * background color as variables
  */
-main-color = #fa5b4d
+main-color = #fa3f20
 background-color = #faf9f0
 
 body
@@ -29,7 +29,7 @@ header
   font-family 'Quicksand'
   padding 50px 10px
   color #fff
-  font-size 25px
+  font-size 30px
   text-align center
 
   /*
@@ -41,7 +41,7 @@ header
   text-shadow 0px -1px 0px darken(main-color, 30%)
 
 .container
-  width 550px
+  width 600px
   margin 25px auto
   overflow hidden
   
@@ -51,10 +51,19 @@ header
 
 .main-content
   float left
-  width 300px
-
+  width 400px
+  
+  a
+    color darken(main-color, 20%)
+    
+  h1
+    margin-bottom 15px
+    font-size 24px
+    text-transform capitalize
+    
   h2
     margin-bottom 5px
+    font-size 18px
     
   form
     margin-bottom 20px
@@ -64,10 +73,33 @@ header
     
     input[type="submit"]
         width 75px
-
+    input[type="radio"]
+        width 15px
+.poll
+    margin: 20px;
+    padding: 5px;
+    border-left 1px dotted #aaa
+    border-right 1px dotted #aaa
+    border-radius: 4px
+    
+    h2
+      font-size 18px
+      text-transform capitalize
+      
+    p
+        margin-left 5px
+        
+    .moderate
+        float right
+        position relative
+        font-size 14px
+        bottom 15px
+        color darken(main-color, 20%)
+        margin-right 5px
+    
 .sidebar
   float left
-  width 250px
+  width 200px
 
   .widget
 
@@ -92,9 +124,15 @@ header
       text-align center
 
     p
-      font-size 13px
+      font-family "Helvetica Neue", Helvetica, sans-serif
+      font-size 16px
       padding 0px 10px
+      margin-left 10px
       margin-bottom 10px
+      letter-spacing 2px
+      font-weight bold
+    a
+      color darken(main-color, 30%)
 
 p
   line-height 1.8
@@ -105,3 +143,6 @@ footer
   border-top 1px dotted #ccc
   padding-top 5px
   font-size 13px
+  
+  a
+    color main-color

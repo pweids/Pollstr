@@ -11,10 +11,29 @@ html
                 - if (typeof(errors) !== 'undefined')
                     each err in errors
                         p= err
+            .flash
+                - if (typeof(flash) !== 'undefined')
+                    each f in flash
+                        p= f
             .main-content
                 block content
             .sidebar
-                block sidebar
+                .widget
+                    h1 Navigation
+                    p
+                        a(href="/home") Home
+                    if user != undefined
+                        p
+                            a(href="/myPolls") My Polls
+                        p
+                            a(href="/createPoll") Create a Poll
+                        p
+                            a(href="/logout") Logout
+                    else
+                        p
+                            a(href="/login") Login
+                        p
+                            a(href="/register") Register
         footer
             p 
                 | Created by 
@@ -24,5 +43,6 @@ html
                 |  at Carnegie Mellon
             p Runs on Node.JS with Express, Passport, Jade, Stylus, Nib, and MongooseDB
         script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js")
+        script(src="/js/scroller.js")
         block scripts
             

@@ -14,10 +14,12 @@ function init() {
     mongoose.connect('mongodb://localhost/myApp');
     
     require('./controllers/loginRoutes')(app);
+    require('./controllers/pollRoutes')(app);
     
     app.get('*', function(req, res) {
        res.render('404',
-       { title: '404'}); 
+       { title: '404',
+       user: req.user}); 
     });
     
     app.listen(8080);

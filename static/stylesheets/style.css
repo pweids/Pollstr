@@ -112,18 +112,18 @@ header {
   font-family: 'Quicksand';
   padding: 50px 10px;
   color: #fff;
-  font-size: 25px;
+  font-size: 30px;
   text-align: center;
 /*
    * Note the use of the `main-color`
    * variable and the `darken` function
    */
-  background-color: #fa5b4d;
-  border-bottom: 1px solid #df1806;
-  text-shadow: 0px -1px 0px #df1806;
+  background-color: #fa3f20;
+  border-bottom: 1px solid #c11f04;
+  text-shadow: 0px -1px 0px #c11f04;
 }
 .container {
-  width: 550px;
+  width: 600px;
   margin: 25px auto;
   overflow: hidden;
 }
@@ -133,10 +133,19 @@ header {
 }
 .main-content {
   float: left;
-  width: 300px;
+  width: 400px;
+}
+.main-content a {
+  color: #dd2405;
+}
+.main-content h1 {
+  margin-bottom: 15px;
+  font-size: 24px;
+  text-transform: capitalize;
 }
 .main-content h2 {
   margin-bottom: 5px;
+  font-size: 18px;
 }
 .main-content form {
   margin-bottom: 20px;
@@ -147,9 +156,35 @@ header {
 .main-content form input[type="submit"] {
   width: 75px;
 }
+.main-content form input[type="radio"] {
+  width: 15px;
+}
+.poll {
+  margin: 20px;
+  padding: 5px;
+  border-left: 1px dotted #aaa;
+  border-right: 1px dotted #aaa;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+.poll h2 {
+  font-size: 18px;
+  text-transform: capitalize;
+}
+.poll p {
+  margin-left: 5px;
+}
+.poll .moderate {
+  float: right;
+  position: relative;
+  font-size: 14px;
+  bottom: 15px;
+  color: #dd2405;
+  margin-right: 5px;
+}
 .sidebar {
   float: left;
-  width: 250px;
+  width: 200px;
 }
 .sidebar .widget {
 /*
@@ -176,9 +211,16 @@ header {
   text-align: center;
 }
 .sidebar .widget p {
-  font-size: 13px;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 16px;
   padding: 0px 10px;
+  margin-left: 10px;
   margin-bottom: 10px;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+.sidebar .widget a {
+  color: #c11f04;
 }
 p {
   line-height: 1.8;
@@ -189,4 +231,7 @@ footer {
   border-top: 1px dotted #ccc;
   padding-top: 5px;
   font-size: 13px;
+}
+footer a {
+  color: #fa3f20;
 }

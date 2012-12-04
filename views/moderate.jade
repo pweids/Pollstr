@@ -1,0 +1,47 @@
+extend layout
+
+if poll.active
+    block content
+        h1 #{poll.title}
+        h2 Candidates
+        br
+        each cand in poll.candidates
+            p= cand
+                button(type="button") X
+                button(type="button") Rename
+        br
+        button(type="button") Add Candidate
+        br
+        if poll.privacy === "private"
+            form(action="/share", method="POST")
+                input(type="hidden", name="pid", value=poll._id)
+                label(for="emails") Enter each email on a seperate line to share poll
+                textarea(name="emails",rows="10", cols="25")
+                br
+                input(type="submit", value="Submit")
+        - var numLeft = poll.votes.length - poll.quorum
+        if numLeft > 0
+            p Not enough votes to end poll. You need ${numLeft} more.
+        else
+            button(type="button") End Poll
+        br
+        button(type="button") Delete Poll
+else
+    block content
+        h1 #{poll.title}
+        h2 Candidates
+        br
+        each cand in poll.candidates
+            p= cand
+        br
+        if poll.numWinners > 1
+            p The winners are
+        else
+            p The winner is
+        each w in poll.winners
+            p= w
+            
+        br
+        button(type="button") Delete Poll
+    
+    

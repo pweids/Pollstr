@@ -17,13 +17,16 @@ $(document).ready(function() {
            error: onError
        });
    }
-   
+   /**
    $('#register').click(function(e) {
        e.preventDefault();
        var username = $('#regUsername').val();
        var password = $('#regPassword').val();
        var passwordConfirm = $('#regPassConfirm').val();
        
+       this.submit();
+       
+       /**
        ajaxFormJSON(
            {
                username: username,
@@ -37,6 +40,7 @@ $(document).ready(function() {
            function error(xhr, status, err){
                alert(JSON.stringify(err));
            });
+           */
    });
     
 });

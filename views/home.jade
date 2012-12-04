@@ -1,0 +1,13 @@
+extend layout
+
+block content
+    - var numPolls = user.polls.length
+    if numPolls === 0
+        p You don't have any polls to moderate or vote on. Why not create one?
+    else
+        p 
+            | You are currently moderating or able to vote in #{numPolls} poll
+            if numPolls > 1
+                |s
+        br
+        p View your polls in the MyPolls page or create a new poll by clicking Create a Poll.

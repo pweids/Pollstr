@@ -1,0 +1,15 @@
+extend layout
+
+block content
+    form(action="register", method="post", accept-charset="utf-8")
+        h2 Register
+        p 
+            input(type="text", name="username", placeholder="email", required)#regUsername
+        p 
+            input(type="password", name="password", placeholder="password", requried)#regPassword
+        p 
+            input(type="password", name="passwordConfirm", placeholder="conform password", required)#regPassConfirm
+        p 
+            input(type="submit", value="Register")#register
+block scripts
+    script(src="/js/index.js")

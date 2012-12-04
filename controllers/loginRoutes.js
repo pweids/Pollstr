@@ -11,7 +11,8 @@ module.exports = function (app) {
     app.get('/', function (req, res) {
         if (req.user === undefined) {
             res.render('index',
-            { title: 'Home' }
+            { title: 'Home',
+            user: req.user }
             );
         } else {
             res.end('Logged In!');
@@ -23,13 +24,11 @@ module.exports = function (app) {
        var password = req.body.password;
        var passwordConfirm = req.body.passwordConfirm;
        
-       console.log(req.body);
-       
        if (!validateEmail(username)) {
-           res.send({'username error': 'not a valid email address'});
+           return res.send({'username error': 'not a valid email address'});
        }
        if (password !== passwordConfirm) {
-           res.send({'password error':'Passwords do not match'});
+           return res.send({'password error':'Passwords do not match'});
        }
        
        User.findOne({username : username }, function(err, existingUser) {
@@ -49,24 +48,51 @@ module.exports = function (app) {
                    if (err) {
                        return res.send({'save error': err});
                    }
-                   return res.send('success');
+                   return res.redirect('/home');
                });
            });
        }); 
     });
     
+    app.get('/login', function(req, res) {
+        if (req.user !== undefined) {
+            res.redirect('/');
+        } else {
+            res.render('login',
+            {title:"Log In",
+            user:req.user});
+        }
+    });
+    
     app.post('/login', passport.authenticate('local'), function(req, res) {
         console.log(req.user.id);
        req.user.save();
-       return res.send('success\n<a href="/logout">logout</a>'); 
+       return res.redirect('/home'); 
     });
     
-    app.get('/login', function(req, res) {
-        res.redirect('/');
-    });
+    app.get('/register', function(req, res) {
+        if (req.user !== undefined) {
+            res.redirect('/');
+        } else {
+            res.render('register',
+            {title:"Register",
+            user:req.user});
+        }
+    })
     
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
+    });
+    
+    app.get('/home', function(req, res) {
+        var testUser = User.findOne({username:'paulw@cmu.edu'}, function(err, user) {
+            if (err) console.log("err: ", err);
+            req.login(user, function(err){if(err)console.log("login err:", err)});
+            return res.render('home',
+            { title: "Home",
+            user: user});
+        });
+         
     })
 }

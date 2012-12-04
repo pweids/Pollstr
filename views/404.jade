@@ -9,3 +9,8 @@ block sidebar
         h1 Navigation
         p
             a(href="/") Home
+        if user != undefined
+            p
+                a(href="/myPolls") My Polls
+            p
+                a(href="/logout") Logout

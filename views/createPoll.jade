@@ -1,0 +1,37 @@
+extend layout
+
+block content
+    h1 Create a new poll.
+    form(action="/createPoll", method="POST")
+        h2(style="margin-top:30px") Create a new poll
+        p
+            input(type="text", name="title", placeholder="Title", required)
+        div#candidates
+            p
+                input(type="text", name="candidates", placeholder="Candidate 1")
+            p
+                input(type="text", name="candidates", placeholder="Candidate 2")
+        p
+            button(type="button")#newCandidate Add another candidate
+        p
+            label(for="style") Choose the voting method
+            br
+            <input type="radio" name="style" style="width:15px" value="fptp", checked /> Winner takes all &nbsp;
+            <input type="radio" name="style" style="width:15px" value="pref" /> Preferential
+        br
+        p
+            label(for="numWinners") Number of winners: &nbsp;
+            select(name="numWinners", id="numWinners")
+                option(value="1") 1
+                option(value="2") 2
+        br
+        p
+            label(for="privacy") Privacy of poll (for a private list, users must be invited via email to vote)
+            br
+            <input type="radio" name="privacy" style="width:15px" value="private" checked /> Private &nbsp;
+            <input type="radio" name="privacy" style="width:15px" value="public" /> Public
+        br
+        p
+            input(type="submit", value="Create")
+block scripts
+    script(src="/js/createPoll.js")

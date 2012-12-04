@@ -1,0 +1,31 @@
+extend layout
+
+if poll.style === "fptp"
+    block content
+        h1 #{poll.title}
+        h2 Please select a candidate to vote for.
+        br
+        form(action="/vote")
+            - var disabled = poll.active ? '' : 'disabled';
+            each c in poll.candidates
+                <input type="radio" name="candidate" value=#{c} #{disabled} /> #{c}
+                br
+                br
+            <input type="radio" name="candidate" value="_abstain_" #{disabled} /> Abstain
+            br
+            br
+            input(type="submit", value="Vote!")
+
+else
+    block content
+        hq #{poll.title}
+        h2 Please arrange the candidates from most preferred to least preferred
+        div#sortable
+            each c,i in poll.candidates
+                li(id="candidate"+#{i}, class="ui-state-default")
+                    span.ui-icon.ui-icon-arrowthick-2-n-s
+                    #{c}
+        button(type="button")#submit Submit Vote
+    
+    block scripts
+        script(src="http://code.jquery.com/ui/1.9.2/jquery-ui.js")

@@ -1,0 +1,11 @@
+extend layout
+
+block content
+    form(action="login", method="post", accept-charset="utf-8")
+        h2 Log In
+        p 
+            input(type="text", name="username", placeholder="email", required)
+        p 
+            input(type="password", name="password", placeholder="password", requried)
+        p 
+            input(type="submit", value="Login")
