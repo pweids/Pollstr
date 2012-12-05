@@ -2,26 +2,37 @@ extend layout
 
 block content
     - var numPolls = polls.length
-    h2 My Polls
-    if numPolls === 0
+    if polls.length === 0
         p You have no polls. Create one or get invited to one to get started.
     else
+        h2 Active Polls
         each poll in polls
-            div.poll
-                h2
-                    a(href="/poll/"+poll._id)= poll.title
-                p #{poll.candidates.length} candidates.
-                if poll.active
-                    p Voting is open.
-                else
+            if poll.active
+                div.poll
+                    h2
+                        a(href="/poll/"+poll._id)= poll.title
+                    p #{poll.candidates.length} candidates.
+                    p Voting is open
+                    if (poll.mod_id.toString() == user._id.toString())
+                        div.moderate
+                            | [
+                            a(href="/mod/"+poll._id) moderate poll
+                            | ]
+        br
+        h2 Ended Polls
+        each poll in polls
+            if !poll.active
+                div.poll
+                    h2
+                        a(href="poll"+poll._id)= poll.title
+                        p #{poll.candidates.length} candidates.
                     if poll.numWinners === 1
-                        p Voting is closed. The winner is #{poll.winners[0]}
+                        p Voting has ended.
+                        p The winner is #{poll.winners[0]}!
                     else
-                        p Voting is closed. The winners are
-                            each name in poll.winners
-                                #{name}
-                if (poll.mod_id.toString() == user._id.toString())
-                    div.moderate
-                        | [
-                        a(href="/mod/"+poll._id) moderate poll
-                        | ]
+                        p Voting has ened and the winners are #{poll.winners}!
+                    if (poll.mod_id.toString() == user._id.toString())
+                        div.moderate
+                            | [
+                            a(href="/mod/"+poll._id) moderate poll
+                            | ]

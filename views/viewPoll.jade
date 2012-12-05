@@ -1,31 +1,43 @@
 extend layout
 
-if poll.style === "fptp"
-    block content
-        h1 #{poll.title}
-        h2 Please select a candidate to vote for.
+block content
+    h1 #{poll.title}
+    - var isDisabled = !(poll.active && canVote) ? 'disabled' : '';
+    if poll.style === "fptp"
+        if !canVote
+            h2(style="color:red") Your vote has already been recieved! Thank you.
+        else
+            h2 Please select a candidate to vote for.
         br
-        form(action="/vote")
-            - var disabled = poll.active ? '' : 'disabled';
+        form(action="/vote", method="post")
+            input(type="hidden", value=poll._id, name="pid")
             each c in poll.candidates
-                <input type="radio" name="candidate" value=#{c} #{disabled} /> #{c}
+                <input type="radio" name="candidate" value=#{c} #{isDisabled} /> #{c}
                 br
                 br
-            <input type="radio" name="candidate" value="_abstain_" #{disabled} /> Abstain
+            <input type="radio" name="candidate" value="_abstain_" #{isDisabled} /> Abstain
             br
             br
-            input(type="submit", value="Vote!")
+            <input type="submit" value="Vote!" #{isDisabled} />
 
-else
-    block content
-        hq #{poll.title}
-        h2 Please arrange the candidates from most preferred to least preferred
+    else
+        if !canVote
+            h2(style="color:red") Your vote has already been recieved! Thank you.
+        else
+            h2 Please arrange the candidates from most preferred to least preferred
+        div(hidden)#pid #{poll.id}
         div#sortable
             each c,i in poll.candidates
-                li(id="candidate"+#{i}, class="ui-state-default")
+                li(id=c, class="ui-state-default")
                     span.ui-icon.ui-icon-arrowthick-2-n-s
-                    #{c}
-        button(type="button")#submit Submit Vote
-    
-    block scripts
-        script(src="http://code.jquery.com/ui/1.9.2/jquery-ui.js")
+                    | #{c}
+        p
+            input(type="checkbox",value='Abstain', isDisabled)#isChecked 
+            | &nbsp; Abstain
+        <button type="button" id="submit" #{isDisabled}>Submit Vote</button>
+
+
+block scripts
+    script(src="http://code.jquery.com/ui/1.9.2/jquery-ui.js")
+    script(src="/js/vote.js")
+    link(rel="stylesheet", href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css")

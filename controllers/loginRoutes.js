@@ -15,7 +15,9 @@ module.exports = function (app) {
             user: req.user }
             );
         } else {
-            res.end('Logged In!');
+            res.render('home',
+            {title: 'Home',
+            user: req.user});
         }
     });
     
@@ -86,6 +88,12 @@ module.exports = function (app) {
     });
     
     app.get('/home', function(req, res) {
+        if (req.user === undefined)
+            return res.redirect('/login');
+        return res.render('home',
+        {title: "Home",
+        user:req.user});
+        /*
         var testUser = User.findOne({username:'paulw@cmu.edu'}, function(err, user) {
             if (err) console.log("err: ", err);
             req.login(user, function(err){if(err)console.log("login err:", err)});
@@ -93,6 +101,6 @@ module.exports = function (app) {
             { title: "Home",
             user: user});
         });
-         
-    })
+         */
+    });
 }

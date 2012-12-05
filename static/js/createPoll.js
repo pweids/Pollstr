@@ -7,10 +7,10 @@ $(document).ready(function() {
        $('#numWinners').append('<option value="'+numCandidates+'">'+numCandidates+'</option>');
    }); 
    
-   
+   /*
    //AJAX METHOD BELOW -- NOT NECESSARY THOUGH
    $('form').submit(function(e) {
-       e.preventDefault();
+       //e.preventDefault();
        
        
        var o = {};
@@ -36,7 +36,7 @@ $(document).ready(function() {
            success: function(data){alert(JSON.stringify(data));},
            error: function(xhr, status, err){alert(JSON.stringify(data))}
            }); 
-       */
+       
        return false;
-   });
+   }); */
 });
