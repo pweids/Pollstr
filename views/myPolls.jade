@@ -24,13 +24,10 @@ block content
             if !poll.active
                 div.poll
                     h2
-                        a(href="poll"+poll._id)= poll.title
+                        a(href="poll/"+poll._id)= poll.title
                         p #{poll.candidates.length} candidates.
-                    if poll.numWinners === 1
-                        p Voting has ended.
-                        p The winner is #{poll.winners[0]}!
-                    else
-                        p Voting has ened and the winners are #{poll.winners}!
+                    p Voting has ended.
+                    p The winner is #{poll.winner}!
                     if (poll.mod_id.toString() == user._id.toString())
                         div.moderate
                             | [

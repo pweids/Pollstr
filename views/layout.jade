@@ -20,9 +20,11 @@ html
             .sidebar
                 .widget
                     h1 Navigation
-                    p
-                        a(href="/home") Home
                     if user != undefined
+                        p
+                            a(href="/home") Home
+                        p
+                            a(href="/about") Methods
                         p
                             a(href="/myPolls") My Polls
                         p
@@ -31,17 +33,23 @@ html
                             a(href="/logout") Logout
                     else
                         p
+                            a(href="/") Home
+                        p
+                            a(href="/about") Methods
+                        p
                             a(href="/login") Login
                         p
                             a(href="/register") Register
         footer
+            if user != undefined
+                p Logged in as #{user.username}
             p 
                 | Created by 
                 a(href="http://www.callmepaul.com") Paul Weidinger
                 |  for 
                 a(href="http://cs.cmu.edu/~237") 15-237
                 |  at Carnegie Mellon
-            p Runs on Node.JS with Express, Passport, Jade, Stylus, Nib, and MongooseDB
+            p Runs on Node.JS with Express, Passport, Jade, Stylus, Nib, Nodemailer and MongoDB
         script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js")
         script(src="/js/scroller.js")
         block scripts

@@ -4,7 +4,7 @@ $(document).ready(function() {
        e.preventDefault();
        numCandidates += 1;
        $('#candidates').append('<p><input type="text" name="candidates" placeholder="Candidate '+numCandidates+'" /></p>')
-       $('#numWinners').append('<option value="'+numCandidates+'">'+numCandidates+'</option>');
+       //$('#numWinners').append('<option value="'+numCandidates+'">'+numCandidates+'</option>');
    }); 
    
    /*

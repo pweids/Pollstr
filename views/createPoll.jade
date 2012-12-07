@@ -16,14 +16,11 @@ block content
         p
             label(for="style") Choose the voting method
             br
-            <input type="radio" name="style" style="width:15px" value="fptp", checked /> Winner takes all &nbsp;
-            <input type="radio" name="style" style="width:15px" value="pref" /> Preferential
-        br
-        p
-            label(for="numWinners") Number of winners: &nbsp;
-            select(name="numWinners", id="numWinners")
-                option(value="1") 1
-                option(value="2") 2
+            <input type="radio" name="style" style="width:15px" value="fptp", checked /> Winner takes all
+            br
+            <input type="radio" name="style" style="width:15px" value="irv" /> Instant Run-Off
+            br
+            <input type="radio" name="style" style="width:15px" value="borda" /> Borda count
         br
         p
             label(for="privacy") Privacy of poll (for a private list, users must be invited via email to vote)

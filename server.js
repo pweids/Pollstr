@@ -28,7 +28,6 @@ function init() {
 init();
 
 
-
 function configureExpress(app) {
     app.configure(function(){
         app.set('views', __dirname + '/views');

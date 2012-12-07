@@ -12,8 +12,7 @@ var Poll = new Schema({
     privacy: {type: String, default: "private"},
     votes: [{username:String, vote: [String]}], //JSON array of submitted votes i.e. [{email:"email", pref:[String]}]
     quorum: { type: Number, default: 0}, //Optional minimum number of votes to 
-    numWinners: {type: Number, default: 1}, //Number of potential winners
-    winners: [String] //When active becomes false, votes are parsed and the winners field is populated
+    winner: String //When active becomes false, votes are parsed and the winners field is populated
 });
 
 module.exports = mongoose.model('Poll', Poll);

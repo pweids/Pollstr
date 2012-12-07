@@ -2,6 +2,8 @@ extend layout
 
 block content
     h1 #{poll.title}
+    if poll.active === false
+        h2(style="font-weight:bold") Poll has ended and the winner is #{poll.winner}!
     - var isDisabled = !(poll.active && canVote) ? 'disabled' : '';
     if poll.style === "fptp"
         if !canVote
@@ -34,6 +36,11 @@ block content
         p
             input(type="checkbox",value='Abstain', isDisabled)#isChecked 
             | &nbsp; Abstain
+        
+        if poll.privacy === 'private' && user === undefined
+            p
+            | Because this poll is set as private and you are not logged in, you must enter
+            | the email address this link was sent to below to verify that you
         <button type="button" id="submit" #{isDisabled}>Submit Vote</button>
 
 

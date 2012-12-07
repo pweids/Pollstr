@@ -1,12 +1,8 @@
 var passport = require('passport');
 var User = require('../models/User');
+var Emailer = require('../controllers/emailer');
 
 module.exports = function (app) {
-    
-    function validateEmail(email) { 
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
-    }
     
     app.get('/', function (req, res) {
         if (req.user === undefined) {
@@ -25,35 +21,57 @@ module.exports = function (app) {
        var username = req.body.username;
        var password = req.body.password;
        var passwordConfirm = req.body.passwordConfirm;
-       
-       if (!validateEmail(username)) {
-           return res.send({'username error': 'not a valid email address'});
-       }
+        debugger;
        if (password !== passwordConfirm) {
            return res.send({'password error':'Passwords do not match'});
        }
        
-       User.findOne({username : username }, function(err, existingUser) {
-           if (err) {
-               return res.send({'username error': err});
-           }
-           if (existingUser) {
-               return res.send('user exists');
-           }
-           
-           var user = new User({ username: req.body.username });
-           user.setPassword(req.body.password, function(err) {
+        User.findOne({username : username }, function(err, existingUser) {
+            if (err) {
+                return res.send({'username error': err});
+            }
+            var user;
+            if (existingUser) {
+                if (existingUser.validated)
+                    return res.send('user exists');
+                else user = existingUser;
+           } else {user = new User({ username: req.body.username});}
+            user.setPassword(req.body.password, function(err) {
                if (err) {
                    return res.send({'password error': err});
                }
-               user.save(function(err) {
+            user.save(function(err) {
                    if (err) {
                        return res.send({'save error': err});
                    }
+                   debugger;
+                   Emailer.sendMail({
+                       from: "pollstr.app@gmail.com",
+                       to: user.username,
+                       subject: "Welcome to Pollstr - Please verify email",
+                       html: "<h2>Hi, welcome to Pollstr</h2><p>Your account has successfuly been registered. " +
+                       "Please follow the below link to verify your account and begin using Pollstr.</p>" +
+                       "<pre><a href='http://localhost:8080/verify/" + user._id + "'>http://pollstr.us/verify/" +
+                       user._id + "</a></pre><p>Happy voting!</p>"
+                   });
+                   
                    return res.redirect('/home');
                });
            });
        }); 
+    });
+    
+    app.get('/verify/:uid', function(req, res) {
+        console.log(req.params.uid);
+        User.findOne({_id:req.params.uid}, function(err, user) {
+            if (err) return res.send({'error':err});
+            user.validated = true;
+            user.save();
+            return res.render('verified',
+                {title: 'Verified',
+                user:undefined,
+                email:user.username});
+        });
     });
     
     app.get('/login', function(req, res) {
@@ -67,7 +85,6 @@ module.exports = function (app) {
     });
     
     app.post('/login', passport.authenticate('local'), function(req, res) {
-        console.log(req.user.id);
        req.user.save();
        return res.redirect('/home'); 
     });
@@ -102,5 +119,11 @@ module.exports = function (app) {
             user: user});
         });
          */
+    });
+    
+    app.get('/about', function(req, res) {
+        return res.render('about',
+        {title: "About",
+        user:req.user});
     });
 }

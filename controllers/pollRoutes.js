@@ -7,7 +7,7 @@ var Emailer = require('./emailer');
 // HELPER METHODS
 function ensureNoDupes(voteArray) {
     for (var i = 0; i < voteArray.length-1; i++) {
-        for (var j = i; j < voteArray.length; j++) {
+        for (var j = i+1; j < voteArray.length; j++) {
             if (voteArray[i].username === voteArray[j].username)
                 return false;
         }
@@ -15,58 +15,139 @@ function ensureNoDupes(voteArray) {
     return true;
 }
 
-function setAll(a, v) {
-    var i, n = a.length;
-    for (i = 0; i < n; ++i) {
-        a[i] = v;
+function countCheck(numVotes, voteCount) {
+    var count = 0;
+    var i, n = voteCount.length;
+    for (var i = 0; i < n; i++) {
+        count += voteCount[i];
     }
+    if (numVotes !== count) console.log("Error - mismatched counts: got " + count + ", expected " + numVotes);
 }
 
-function winnerIndex(countArray) {
+//Add method to Array prototype to set all values to 'v'
+
+Array.prototype.setAll = function(v) {
+    var i, n = this.length;
+    for (i = 0; i < n; ++i)
+        this[i] = v;
+}
+
+
+//Find indices of lowest/highest votes. Loser boolean denotes high or low order
+
+function getIndex(countArray, loser) {
     var i, n = countArray.length;
-    var hiCount = 0, index = [-1];
+    var point = loser ? Infinity : -Infinity;
+    var index = [-1];
     for (i = 0; i < n; i++) {
-        if (hiCount < countArray[i]) {
-            hiCount = countArray[i];
+        if ( loser ? point > countArray[i] : point < countArray[i]) {
+            point = countArray[i];
             index = [i];
-        } else if (hiCount === countArray[i] && index !== i) {
+        } else if (point === countArray[i]) {
             index.push(i);
         }
     }
     return index;
 }
 
-function countVote(poll) {
-    if (!ensureNoDupes(poll.votes)) throw "Duplicate voters!";
-        //fptp method right now
-    var voteCount = new Array(poll.candidates.length);
-    setAll(voteCount, 0);
+// Returns an array with votes for each candidate
+function simpleCount(candidates, votes, index) {
+    var i = index || 0;
+    var a = new Array(candidates.length);
+    a.setAll(0);
     
-    var i, n = poll.votes.length;
-    for (i = 0; i < n; i++) {
-        var vote = poll.votes[i].vote[0];
-        if (vote !== '_abstain_') {
-            var index = poll.candidates.indexOf(vote);
-            voteCount[index] += 1;
+    var j = 0, n = votes.length;
+    for (j; j < n; j++) {
+        a[candidates.indexOf(votes[j].vote[i])]++;
+    }
+    return a;
+}
+
+function closePoll(poll, voteCount, winner) {
+    if (!winner) {
+        var wIndex = getIndex(voteCount);
+        if (wIndex[0] === -1) return "error, no votes";
+        else {
+            if (wIndex.length > 1) {
+                winner = "A tie between " + poll.candidates[wIndex[0]];
+                var i, n = wIndex.length;
+                for (i = 1; i < n; i++)
+                    winner += ', ' + poll.candidates[wIndex[1]];
+            } else winner = poll.candidates[wIndex[0]];
+        }
+   }
+   poll.winner = winner;
+   poll.active = false;
+   poll.save();
+}
+
+
+
+//The actual counting algorithms
+function countVoteFPTP(poll) {
+    var voteCount = simpleCount(poll.candidates, poll.votes);
+    closePoll(poll, voteCount);
+}
+
+
+function countVoteBorda(poll) {
+    var i, n = candidates.length;
+    var candidates = poll.candidates;
+    var voteCount = simpleCount(candidates, poll.votes, n-1);
+    
+    for (i = 0; i<n-1; i++) {
+        var newVote = simpleCount(candidates, poll.votes, i);
+        var j = 0, m = newVote.length;
+        for (j; j < m; j++) {
+            voteCount[j] += newVote[j]*(n-i);
         }
     }
-    var wIndex = winnerIndex(voteCount);
-    if (wIndex[0] === -1)
-        console.log("error -- no votes found");
-    else if (wIndex.length > 1) {
-        var resText = "The poll resulted in a tie between";
-        var i, n = wIndex.length;
-        for (i = 0; i < n; i++) {
-            resText += " " + poll.candidates[wIndex[i]];
+    
+    closePoll(poll, voteCount);
+}
+
+
+function countVoteIRV(poll) {
+    var candidates  = poll.candidates;
+    var votes       = poll.votes;
+    var voteCount   = simpleCount(candidates);
+    var index       = getIndex(voteCount);
+    
+    while (index.length > 1 || voteCount[index[0]]/numVotes < 0.5) {
+        //Clear out the losers
+        var lindex = getIndex(voteCount, true);
+        //If every candidate is in last place, there is a dead tie. So we switch to a borda count
+        if (lindex.length === candidates.length) {
+            countVoteBorda(poll);
+            return;
+        } else if (lindex.length > 1) {
+            //tie handling algorithm
+            lindex.sort(function(a,b){return b-a});
+            var tmp = voteCount, tmpvote = 0;
+            for (var i = 0; i < lindex.length; i++) {
+                tmpvote += voteCount[lindex[i]];
+                tmp.splice(lindex[i],1);
+            }
+            var lindex2 = getIndex(tmp,true);
+            //If the next highest candidate has more than all losers combined,
+            // we can elimiate the two losers and move on
+            // Otherwise we switch to Borda Count
+            if (tmpvote < tmp[lindex2[0]]) {
+                candidates = tmp;
+            } else {
+                countVoteBorda(poll);
+                return
+            }
+        } else candidates.splice(lindex[0],1);
+        
+        //Remove entries in vote and re tabulate the vote
+        for (var i = 0; i < votes.length; i++) {
+            while (candidates.indexOf(votes[i].vote[0]) === -1) votes[i].vote.shift();
         }
-        console.log(resText);
-    } else {
-        var winner = poll.candidates[wIndex[0]];
-        poll.winners.push(winner);
-        poll.active = false;
-        poll.save();
-        console.log('Winner of poll is ' + winner);
+        voteCount = simpleCount(candidates);
+        index = getIndex(voteCount);
     }
+    closePoll(poll, null, candidates[index[0]]);
 }
 
 module.exports = function (app) {
@@ -126,23 +207,37 @@ module.exports = function (app) {
         });
     });
     
-    app.get('/poll/:pid', function(req, res) {
-        //if (req.user === undefined) return res.send(401, "unauthroized");
+    //For private polls sent to unverified email addresses
+    app.get('/poll/:pid/:uid', function(req, res) {
         
         Poll
         .findById(req.params.pid)
         .populate('users')
         .exec(function(err, poll) {
+            if (err) return res.send({"error":err});
+            if (!poll || poll.privacy === "public") return res.render('404', {title:'Not Found', user:req.user});
+            else {
+                
+            }
+        });
+    })
+    
+    //For public & private polls when logged in
+    app.get('/poll/:pid', function(req, res) {
+        if (req.user === undefined) return res.redirect('/login');
+        
+        Poll
+        .findById(req.params.pid)
+        .populate('users')
+        .where('users.username')
+        .exec(function(err, poll) {
             if (err) return res.send("error: ", err);
             
+            if (!poll) return res.render('404', {title:'Not Found', user:req.user});
+            
             if (poll.privacy === 'private') {
-                debugger;
-                if (req.user === undefined)
-                    return res.redirect('/login');
-                else {
-                    if (!poll.mod_id.equals(req.user._id) && poll.users.indexOf(req.user) === -1)
-                        return res.send(401, "unauthorized");
-                }
+                 if (!poll.mod_id.equals(req.user._id) && poll.users.indexOf(req.user) === -1)
+                     return res.send(401, "unauthorized");
             }
             
             var canVote = true;
@@ -254,9 +349,13 @@ module.exports = function (app) {
         .equals(req.user._id)
         .exec(function(err, poll) {
             if(err) return res.send(400);
-            console.log(poll);
+            console.log(poll.votes);
             if (poll)
-                countVote(poll);
+                if (poll.style === 'fptp')
+                    countVoteFPTP(poll);
+                else if (poll.style === 'irv')
+                    countVoteIRV(poll);
+                else countVoteBorda(poll);
             return res.send(200);
         }); 
     });
@@ -271,7 +370,7 @@ module.exports = function (app) {
         console.log(req.body.candidate);
         debugger;
         Poll
-        .findByIdAndUpdate(pid,{ $push: {votes: vote}})
+        .findById(pid)
         .populate('users')
         .where('votes.username').nin([req.user.username])
         .exec(function (err, poll) {
@@ -281,6 +380,13 @@ module.exports = function (app) {
                 if(req.user.polls.indexOf(poll._id) === -1) {
                     req.user.polls.push(poll._id);
                     req.user.save();
+                }
+                if (vote === '_abstain_') {
+                    poll.quorum = poll.quorum > 0 ? 0 : poll.quorum - 1;
+                    poll.save();
+                } else {
+                    poll.votes.push(vote);
+                    poll.save();
                 }
                 return res.send(201, "Success");
             }
