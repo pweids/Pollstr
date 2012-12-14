@@ -23,8 +23,8 @@ function init() {
        user: req.user}); 
     });
     
-    app.listen(port, function(){
-        console.log("Listening on port " + port);
+    app.listen(8080, function(){
+        console.log("Listening on port " + 8080);
     });
 }
 

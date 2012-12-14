@@ -94,7 +94,7 @@ function countVoteBorda(poll) {
     var candidates = poll.candidates;
     var i, n = candidates.length;
     var voteCount = simpleCount(candidates, poll.votes, n-1);
-    
+    debugger;
     for (i = 0; i<n-1; i++) {
         var newVote = simpleCount(candidates, poll.votes, i);
         var j = 0, m = newVote.length;
@@ -123,17 +123,22 @@ function countVoteIRV(poll) {
         } else if (lindex.length > 1) {
             //tie handling algorithm
             lindex.sort(function(a,b){return b-a});
-            var tmp = voteCount, tmpvote = 0;
+            var tmpVoteCount = voteCount.slice();
+            var tmpCandidates = candidates.slice();
+            var tmpvote = 0;
             for (var i = 0; i < lindex.length; i++) {
                 tmpvote += voteCount[lindex[i]];
-                tmp.splice(lindex[i],1);
+                tmpVoteCount.splice(lindex[i],1);
+                tmpCandidates.splice(lindex[i],1);
             }
-            var lindex2 = getIndex(tmp,true);
+            debugger;
+            var lindex2 = getIndex(tmpVoteCount,true);
             //If the next highest candidate has more than all losers combined,
             // we can elimiate the two losers and move on
             // Otherwise we switch to Borda Count
-            if (tmpvote < tmp[lindex2[0]]) {
-                candidates = tmp;
+            if (tmpvote < tmpVoteCount[lindex2[0]]) {
+                candidates = tmpCandidates;
+                voteCount = tmpVoteCount;
             } else {
                 countVoteBorda(poll);
                 return
