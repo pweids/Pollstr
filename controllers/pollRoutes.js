@@ -2,7 +2,7 @@ var passport = require('passport');
 var User = require('../models/User');
 var Vote = require('../models/Vote');
 var Poll = require('../models/Poll');
-var Emailer = require('./emailer');
+var Emailer = require('../controllers/emailer');
 
 // HELPER METHODS
 function ensureNoDupes(voteArray) {
@@ -91,8 +91,8 @@ function countVoteFPTP(poll) {
 
 
 function countVoteBorda(poll) {
-    var i, n = candidates.length;
     var candidates = poll.candidates;
+    var i, n = candidates.length;
     var voteCount = simpleCount(candidates, poll.votes, n-1);
     
     for (i = 0; i<n-1; i++) {
@@ -110,10 +110,10 @@ function countVoteBorda(poll) {
 function countVoteIRV(poll) {
     var candidates  = poll.candidates;
     var votes       = poll.votes;
-    var voteCount   = simpleCount(candidates);
+    var voteCount   = simpleCount(candidates, votes);
     var index       = getIndex(voteCount);
     
-    while (index.length > 1 || voteCount[index[0]]/numVotes < 0.5) {
+    while (index.length > 1 || voteCount[index[0]]/votes.length < 0.5) {
         //Clear out the losers
         var lindex = getIndex(voteCount, true);
         //If every candidate is in last place, there is a dead tie. So we switch to a borda count
@@ -144,7 +144,7 @@ function countVoteIRV(poll) {
         for (var i = 0; i < votes.length; i++) {
             while (candidates.indexOf(votes[i].vote[0]) === -1) votes[i].vote.shift();
         }
-        voteCount = simpleCount(candidates);
+        voteCount = simpleCount(candidates, votes);
         index = getIndex(voteCount);
     }
     closePoll(poll, null, candidates[index[0]]);
@@ -210,6 +210,8 @@ module.exports = function (app) {
     //For private polls sent to unverified email addresses
     app.get('/poll/:pid/:uid', function(req, res) {
         
+        console.log(req.params.pid, req.params.uid);
+        
         Poll
         .findById(req.params.pid)
         .populate('users')
@@ -217,18 +219,37 @@ module.exports = function (app) {
             if (err) return res.send({"error":err});
             if (!poll || poll.privacy === "public") return res.render('404', {title:'Not Found', user:req.user});
             else {
-                
+                User
+                .findById(req.params.uid)
+                .exec(function(err, user) {
+                    if (err) return res.send({'error' : err});
+                    if (!user) return res.send(400);
+                    
+                    var canVote = true;
+                    for (var i = 0; i < poll.votes.length; i++) {
+                        if (poll.votes[i].username === user.username) {
+                            canVote = false;
+                            break;
+                        }
+                    }
+                    
+                    return res.render('viewPoll',
+                    {title : poll.title,
+                        user:user,
+                        poll:poll,
+                        canVote : canVote});
+                    
+                })
             }
         });
     })
     
-    //For public & private polls when logged in
+    //For public & private polls when logged in & verified
     app.get('/poll/:pid', function(req, res) {
         if (req.user === undefined) return res.redirect('/login');
         
         Poll
         .findById(req.params.pid)
-        .populate('users')
         .where('users.username')
         .exec(function(err, poll) {
             if (err) return res.send("error: ", err);
@@ -236,8 +257,8 @@ module.exports = function (app) {
             if (!poll) return res.render('404', {title:'Not Found', user:req.user});
             
             if (poll.privacy === 'private') {
-                 if (!poll.mod_id.equals(req.user._id) && poll.users.indexOf(req.user) === -1)
-                     return res.send(401, "unauthorized");
+                 if (!poll.mod_id.equals(req.user._id) && poll.users.indexOf(req.user._id) === -1)
+                     return res.send(401, "Email address not verified");
             }
             
             var canVote = true;
@@ -275,22 +296,52 @@ module.exports = function (app) {
     
     app.post('/share', function(req, res) {
         if (req.user === undefined) return res.send(401);
+        
+        var emails = req.body.emails.split(/\r?\n/g);
+        console.log(emails);
+        
         Poll
         .findById(req.body.pid)
         .where('mod_id')
         .equals(req.user._id)
+        .populate('users')
         .exec(function(err, poll)
         {
-            var emailer = new Emailer();
-            var emails = req.body.emails.split(/\r?\n/g);
-            if (err) res.send(400, "error");
-            else {
-                emailer.sendMail(emails, req.user.username + 
-                    " has shared a poll with you: " + 
-                    poll.title + ". Visit the link below to view <br />" +
-                    "<a href='http://localhost:8080/poll/" + poll._id + ">Link</a>");
-                res.send(201, "success"); 
-            }
+            if (err) return res.send(400);
+            if (!poll) return res.send(400);
+        
+            User
+            .find()
+            .where('username')
+            .in(emails)
+            .exec(function (err, eusers) {
+                if (err) {console.log(err); return;}
+                else {
+                    var i, n = emails.length;
+                    for (i = 0; i < n; i++) {
+                        debugger;
+                        var user;
+                        if (eusers && eusers.indexOf(emails[i].username) !== -1) user = eusers[eusers.indexOf(emails[i].username)];
+                        else user = new User({username: emails[i]});
+                        user.polls.push(poll._id);
+                        user.save();
+                        poll.users.push(user);
+                        poll.save();
+                        Emailer.sendMail({
+                               from: "pollstr.app@gmail.com",
+                               to: user.username,
+                               subject: "A poll has been shared with you",
+                               html: "<p>" + req.user.username + " has shared a poll, \""+poll.title+",\" with you." +
+                               "Please follow the below link to vote in your poll.</p>" +
+                               "<a href='http://128.237.250.255:8080/poll/" + poll._id + "/" + user._id + "'>Vote!</a>" +
+                               "<p>You can only vote once. You can register this email address to access all of your polls</p>"+
+                               "<p>Happy voting!</p>"
+                           });
+                        console.log("Added " + user.username + " to " + poll.title);
+                    }
+                }
+            });   
+            return res.redirect('/myPolls');
         });
     });
     
@@ -349,22 +400,22 @@ module.exports = function (app) {
         .equals(req.user._id)
         .exec(function(err, poll) {
             if(err) return res.send(400);
-            console.log(poll.votes);
+            //console.log(poll.votes);
             if (poll)
                 if (poll.style === 'fptp')
                     countVoteFPTP(poll);
                 else if (poll.style === 'irv')
                     countVoteIRV(poll);
                 else countVoteBorda(poll);
-            return res.send(200);
+            return res.send(200, "The winner is " + poll.winner);
         }); 
     });
     
     app.post('/vote', function(req, res) {
         var pid = req.body.pid;
-        var uid = req.user._id;
+        var uname = req.user ? req.user.username : req.body.uid;
         
-        var vote = {username:req.user.username,
+        var vote = {username:uname,
             vote:req.body.candidate};
         
         console.log(req.body.candidate);
@@ -372,17 +423,27 @@ module.exports = function (app) {
         Poll
         .findById(pid)
         .populate('users')
-        .where('votes.username').nin([req.user.username])
+        .populate('mod_id')
+        .where('votes.username').nin([uname])
         .exec(function (err, poll) {
             if (err) return res.send(400);
             if (!poll) return res.send(401, "You already voted ass wipe");
             else {
-                if(req.user.polls.indexOf(poll._id) === -1) {
+                if (poll.privacy === 'private') {
+                    var i, n = poll.users.length;
+                    var flag = false;
+                    for (i = 0; i < n; i++) {
+                        if (poll.users[i].username === uname) flag = true;
+                    }
+                    if (poll.mod_id.username === uname) flag = true;
+                    if (!flag) return res.send(401);
+                }
+                if(req.user && req.user.polls.indexOf(poll._id) === -1) {
                     req.user.polls.push(poll._id);
                     req.user.save();
                 }
-                if (vote === '_abstain_') {
-                    poll.quorum = poll.quorum > 0 ? 0 : poll.quorum - 1;
+                if (vote.vote === '_abstain_') {
+                    poll.quorum = poll.quorum > 0 ? poll.quorum - 1 : 0;
                     poll.save();
                 } else {
                     poll.votes.push(vote);

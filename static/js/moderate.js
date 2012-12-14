@@ -18,8 +18,8 @@ $(document).ready(function() {
    }; 
    
    window.endPoll = function(pid) {
-       if (confirm("Are you sure you want to end this poll?" +
-       "Users will no longer be able to vote. The poll may be reopened")) {
+       if (confirm("Are you sure you want to end this poll? " +
+       "Users will no longer be able to vote.")) {
            $.ajax({
                url: '/end',
                async: true,
@@ -27,7 +27,8 @@ $(document).ready(function() {
                data: {pid:pid},
                type: 'GET',
                success:function(res) {
-                   console.log(res);
+                   alert(res);
+                   document.location.replace("http://localhost:8080/myPolls")
                }
            });
        }

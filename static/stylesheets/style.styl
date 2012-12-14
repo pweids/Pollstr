@@ -20,6 +20,158 @@ global-reset()
 main-color = #fa3f20
 background-color = #faf9f0
 
+@media screen and (min-width:758px)
+    #sortable
+        width 60%
+        
+    header
+        padding 50px 10px
+        
+    .container
+        width 600px
+        margin 25px auto
+    
+    .main-content
+        float left
+        width 400px
+        
+        h1
+             margin-bottom 15px
+             font-size 24px
+        
+    .sidebar
+        float left
+        width 200px
+        
+        h1
+            display block
+        
+        .widget
+            border-radius 3px
+            border 1px solid #ccc
+            background-color background-color
+            box-shadow inset 0px 0px 0px 3px rgba(#fff, 0.8), 0px 3px 0px -2px rgba(#000, 0.1)
+            margin-left 20px
+            
+            p
+                font-size 16px
+                padding 0px 10px
+                margin-left 10px
+        
+    footer
+        margin 50px auto
+        width 500px
+
+@media screen and (max-width:758px)
+    #breakme
+        display inline-block
+    header
+        padding 10px 10px
+        
+    .main-content
+        margin 50px 40px
+        float none
+        //text-align center
+        
+        h1
+            text-align center
+            font-size 24px
+        form
+            width 250px
+            margin auto
+            
+    .sidebar
+        position absolute
+        top 65px
+        left 4%
+        width 91%
+        text-align center
+        
+        .widget
+            margin 0 auto
+            border-radius 3px
+            border 1px solid #ccc
+            background-color background-color
+            box-shadow inset 0px 0px 0px 3px rgba(#fff, 0.8), 0px 3px 0px -2px rgba(#000, 0.1)
+            p
+                display inline
+                padding 0px 8cpx
+                margin-left 10px
+            h1
+                display none
+                margin-bottom 5px
+    footer
+        margin 0 30px
+        text-align center
+        
+@media screen and (max-width:450px)
+    .breakme
+        display inline-block
+        
+    header
+        padding 5px
+    
+    .main-content
+        min-width 320
+        margin 20px 15px
+        
+        h1
+            font-size 20px
+            font-weight bold
+
+    .sidebar
+        position absolute
+        top 40px
+        left 0
+        width 100%
+        text-align center
+
+        .widget
+            margin 0 auto
+            border none
+            box-shadow none
+            border-radius 0px
+            background-color transparent
+            border-bottom 1px solid #ccc
+            p
+                white-space nowrap
+                display inline
+                font-size 16px
+                padding 4px
+                margin 5px
+            h1
+                display none
+                margin-bottom 5px
+    footer
+        margin 0 30px
+        text-align center
+        font-size 13px
+
+@media screen and (max-width:320px)
+    .breakme
+        display inline-block
+    .main-content
+        margin 15px 5px
+        
+        p
+            text-align justify
+            
+    .sidebar
+        .widget
+            padding 0
+
+    footer
+        margin 0
+        width 100%
+        font-size 12px
+    
+    .poll
+        padding 0 5px 15px 5px !important
+        
+    .moderate
+        margin-top 15px !important
+        
+
 body
   font-family 'Georgia'
   background-color background-color
@@ -27,7 +179,6 @@ body
 
 header
   font-family 'Quicksand'
-  padding 50px 10px
   color #fff
   font-size 30px
   text-align center
@@ -41,8 +192,6 @@ header
   text-shadow 0px -1px 0px darken(main-color, 30%)
 
 .container
-  width 600px
-  margin 25px auto
   overflow hidden
   
 .errors
@@ -50,15 +199,11 @@ header
   padding 10px
 
 .main-content
-  float left
-  width 400px
   
   a
     color darken(main-color, 20%)
     
   h1
-    margin-bottom 15px
-    font-size 24px
     text-transform capitalize
     
   h2
@@ -95,7 +240,6 @@ header
     list-style-type none
     margin 0
     padding 0
-    width 60%
     cursor url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
 
     li
@@ -109,8 +253,9 @@ header
             position absolute
             margin-left -1.3em
 .poll
-    margin: 20px;
-    padding: 5px;
+    margin: 10px 20px 20px 10px;
+    padding: 1px 5px
+    box-sizing border-box
     border-left 1px dotted #aaa
     border-right 1px dotted #aaa
     border-radius: 4px
@@ -132,20 +277,8 @@ header
     
 .sidebar
   float left
-  width 200px
 
   .widget
-
-    /*
-     * Note the lack of vendor
-     * prefixes here. Nib will
-     * add them for us
-     */
-    border-radius 3px
-    border 1px solid #ccc
-    margin-left 20px
-    background-color background-color
-    box-shadow inset 0px 0px 0px 3px rgba(#fff, 0.8), 0px 3px 0px -2px rgba(#000, 0.1)
 
     h1
       font-family 'Quicksand'
@@ -158,24 +291,23 @@ header
 
     p
       font-family "Helvetica Neue", Helvetica, sans-serif
-      font-size 16px
-      padding 0px 10px
-      margin-left 10px
       margin-bottom 10px
       letter-spacing 2px
       font-weight bold
     a
       color darken(main-color, 30%)
+    
+    br
+        display block
+        margin 10px 0
+        content ""
 
 p
   line-height 1.8
 
 footer
-  width 500px
-  margin 50px auto
   border-top 1px dotted #ccc
   padding-top 5px
-  font-size 13px
   
   a
     color main-color

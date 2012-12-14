@@ -3,10 +3,14 @@ html
     head
         title Pollstr - #{title}
         link(rel='stylesheet', href='/stylesheets/style.css')
+        meta(name="viewport", content="width=device-width; initial-scale=1.0")
     body
         header
             h1 Pollstr
         .container
+            if user != undefined
+                br
+                br
             .errors
                 - if (typeof(errors) !== 'undefined')
                     each err in errors
@@ -26,11 +30,13 @@ html
                         p
                             a(href="/about") Methods
                         p
+                            a(href="/logout") Logout
+                        br
+                        p
                             a(href="/myPolls") My Polls
                         p
                             a(href="/createPoll") Create a Poll
-                        p
-                            a(href="/logout") Logout
+                        
                     else
                         p
                             a(href="/") Home
@@ -41,7 +47,7 @@ html
                         p
                             a(href="/register") Register
         footer
-            if user != undefined
+            -if (user != undefined && user.password)
                 p Logged in as #{user.username}
             p 
                 | Created by 

@@ -8,11 +8,11 @@ block content
         p
             span.candidate= cand
                 
-            button(type="button", style="float:right; margin-right:20%") Delete
-            button(type="button", style="float:right").rename Rename
+            //button(type="button", style="float:right; margin-right:20%") Delete
+            //button(type="button", style="float:right").rename Rename
     br
-    button(type="button") Add Candidate
-    br
+    //button(type="button") Add Candidate
+    //br
     if poll.privacy === "private"
         form(action="/share", method="POST")
             input(type="hidden", name="pid", value=poll._id)

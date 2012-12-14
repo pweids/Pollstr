@@ -40,7 +40,5 @@ $(document).ready(function() {
            function error(xhr, status, err){
                alert(JSON.stringify(err));
            });
-           */
-   });
-    
+           **/
 });

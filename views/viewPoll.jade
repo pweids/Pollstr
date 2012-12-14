@@ -12,6 +12,7 @@ block content
             h2 Please select a candidate to vote for.
         br
         form(action="/vote", method="post")
+            input(type="hidden", value=user.username, name="uid")
             input(type="hidden", value=poll._id, name="pid")
             each c in poll.candidates
                 <input type="radio" name="candidate" value=#{c} #{isDisabled} /> #{c}
@@ -27,10 +28,11 @@ block content
             h2(style="color:red") Your vote has already been recieved! Thank you.
         else
             h2 Please arrange the candidates from most preferred to least preferred
+        div(hidden)#uid #{user.username}
         div(hidden)#pid #{poll.id}
         div#sortable
             each c,i in poll.candidates
-                li(id=c, class="ui-state-default")
+                li(id=c, class="ui-state-default").touchable
                     span.ui-icon.ui-icon-arrowthick-2-n-s
                     | #{c}
         p
@@ -46,5 +48,6 @@ block content
 
 block scripts
     script(src="http://code.jquery.com/ui/1.9.2/jquery-ui.js")
+    script(src="/js/touchable.js")
     script(src="/js/vote.js")
     link(rel="stylesheet", href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css")

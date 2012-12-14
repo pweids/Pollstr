@@ -1,6 +1,9 @@
-$(document).ready(function() {
-        $( "#sortable" ).sortable();
+$(document).ready(function() {    
+        $( "#sortable" ).sortable({
+        }).addTouch();
         $( "#sortable" ).disableSelection();
+        
+        
         
         ajaxFormJSON = function(data) {
             $.ajax({
@@ -21,6 +24,7 @@ $(document).ready(function() {
         $('#submit').click(function(e) {
             var vote = $('#isChecked').attr('checked') ? ['_abstain_'] : $("#sortable").sortable('toArray');
             var data = {
+                uid:$('#uid').html(),
                 pid:$('#pid').html(),
                 candidate: vote
                 };
