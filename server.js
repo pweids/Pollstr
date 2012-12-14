@@ -4,6 +4,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var stylus = require('stylus');
 var nib = require('nib');
+var port = process.env.PORT | 8080;
 
 function init() {
     var app = express();
@@ -22,7 +23,6 @@ function init() {
        user: req.user}); 
     });
     
-    var port = process.env.PORT | 8080;
     app.listen(port);
 }
 
