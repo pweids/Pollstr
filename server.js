@@ -23,7 +23,9 @@ function init() {
        user: req.user}); 
     });
     
-    app.listen(port);
+    app.listen(port, function(){
+        console.log("Listening on port " + port);
+    });
 }
 
 init();
