@@ -5,9 +5,19 @@
 	"private": true,
 	"dependencies": {
 	    "express":"3.x",
-	    "jade":"*",
-	    "passport":"*",
-	    "stylus":"*",
-	    "nib":"*"
+	    "jade":"0.27.x",
+	    "passport":"0.1.x",
+	    "passport-local":"0.1.x",
+	    "passport-local-mongoose":"0.1.x",
+	    "stylus":"0.31.x",
+	    "nib":"0.9.x",
+	    "mongoose":"3.x",
+	    "nodemailer":"0.3.x"
+	    
+	},
+	"engines": {
+	    "npm":"1.1.x",
+	    "node":"0.8.x"
 	}
+	
 }
